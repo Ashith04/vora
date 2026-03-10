@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Vora – A voice-controlled ecosystem learning game that teaches ecosystem concepts and improves verbal communication skills.">
+    <title>Vora – Voice Controlled Ecosystem Learning Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Floating Particles Background -->
+    <div id="particles-canvas" class="particles-canvas"></div>
+
+    <!-- Avatar Guide (persistent) -->
+    <div id="avatar-guide" class="avatar-guide hidden">
+        <img src="assets/avatar.png" alt="Eco the Owl Guide" class="avatar-img">
+        <div class="avatar-speech-bubble">
+            <p id="avatar-text">Welcome to Vora! 🌿</p>
+        </div>
+    </div>
+
+    <!-- ============== HOME SCREEN ============== -->
+    <section id="screen-home" class="screen active">
+        <div class="home-container">
+            <div class="hero-section">
+                <div class="logo-glow"></div>
+                <h1 class="game-title">
+                    <span class="title-eco">Eco</span><span class="title-voice">Voice</span>
+                    <span class="title-quest">Quest</span>
+                </h1>
+                <p class="game-subtitle">Practice under pressure. Speak with confidence. Find your voice.</p>
+                <div class="voice-wave-hero">
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                </div>
+            </div>
+
+            <div class="mode-cards">
+                <button class="mode-card" id="btn-explorer" onclick="App.navigateTo('explorer-select')">
+                    <div class="mode-icon">🌍</div>
+                    <h2>Explorer Mode</h2>
+                    <p>Practice scenarios in pressure environments</p>
+                    <span class="mode-badge">Practice</span>
+                </button>
+                <button class="mode-card" id="btn-challenge" onclick="App.navigateTo('challenge')">
+                    <div class="mode-icon">⚡</div>
+                    <h2>Challenge Mode</h2>
+                    <p>Rapid-fire questions under time pressure</p>
+                    <span class="mode-badge">Compete</span>
+                </button>
+                <button class="mode-card" id="btn-trainer" onclick="App.navigateTo('trainer')">
+                    <div class="mode-icon">🎙️</div>
+                    <h2>Communication Trainer</h2>
+                    <p>Practice speeches & get confidence feedback</p>
+                    <span class="mode-badge">Speak</span>
+                </button>
+            </div>
+
+            <div class="home-stats">
+                <div class="stat-pill">
+                    <span class="stat-icon">🏆</span>
+                    <span id="home-score">0</span> Points
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-icon">🔥</span>
+                    <span id="home-streak">0</span> Streak
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-icon">⭐</span>
+                    <span id="home-badges">0</span> Badges
+                </div>
+            </div>
+
+            <button class="btn-scoreboard" id="btn-scoreboard" onclick="App.navigateTo('scoreboard')">
+                📊 View Scoreboard & Achievements
+            </button>
+        </div>
+    </section>
+
+    <!-- ============== MIC PERMISSION SCREEN ============== -->
+    <section id="screen-mic-permission" class="screen">
+        <div class="permission-container">
+            <div class="permission-icon pulse-ring">🎤</div>
+            <h2>Microphone Access Required</h2>
+            <p>Vora uses your microphone to listen to your voice answers. No audio is recorded or stored.</p>
+            <button class="btn-primary" id="btn-grant-mic" onclick="Voice.requestPermission()">
+                Allow Microphone
+            </button>
+            <p class="permission-note">You can change this anytime in your browser settings.</p>
+        </div>
+    </section>
+
+    <!-- ============== EXPLORER: SCENARIO SELECT ============== -->
+    <section id="screen-explorer-select" class="screen">
+        <div class="screen-header">
+            <button class="btn-back" onclick="App.navigateTo('home')">← Back</button>
+            <h2>Choose a Scenario</h2>
+            <div class="header-score">🏆 <span id="explorer-select-score">0</span></div>
+        </div>
+        <div class="ecosystem-map">
+            <button class="ecosystem-card" id="eco-interview" onclick="Explorer.selectEcosystem('interview')">
+                <img src="assets/interview.png" alt="Interview Scenario" class="eco-card-img">
+                <div class="eco-card-overlay">
+                    <h3>🎯 Interview</h3>
+                    <p>Face tough questions with confidence</p>
+                    <div class="eco-progress-mini">
+                        <div class="eco-progress-fill" id="interview-progress" style="width: 0%"></div>
+                    </div>
+                    <span class="eco-status" id="interview-status">0/5 Complete</span>
+                </div>
+            </button>
+            <button class="ecosystem-card" id="eco-presentation" onclick="Explorer.selectEcosystem('presentation')">
+                <img src="assets/presentation.png" alt="Presentation Scenario" class="eco-card-img">
+                <div class="eco-card-overlay">
+                    <h3>🎤 Presentation</h3>
+                    <p>Present ideas clearly on stage</p>
+                    <div class="eco-progress-mini">
+                        <div class="eco-progress-fill" id="presentation-progress" style="width: 0%"></div>
+                    </div>
+                    <span class="eco-status" id="presentation-status">0/5 Complete</span>
+                </div>
+            </button>
+            <button class="ecosystem-card" id="eco-debate" onclick="Explorer.selectEcosystem('debate')">
+                <img src="assets/debate.png" alt="Debate Scenario" class="eco-card-img">
+                <div class="eco-card-overlay">
+                    <h3>⚔️ Debate</h3>
+                    <p>Build arguments, counter opponents</p>
+                    <div class="eco-progress-mini">
+                        <div class="eco-progress-fill" id="debate-progress" style="width: 0%"></div>
+                    </div>
+                    <span class="eco-status" id="debate-status">0/5 Complete</span>
+                </div>
+            </button>
+            <button class="ecosystem-card" id="eco-groupdiscussion" onclick="Explorer.selectEcosystem('groupdiscussion')">
+                <div class="eco-card-placeholder">💬</div>
+                <div class="eco-card-overlay">
+                    <h3>💬 Group Discussion</h3>
+                    <p>Lead, listen, and contribute</p>
+                    <div class="eco-progress-mini">
+                        <div class="eco-progress-fill" id="groupdiscussion-progress" style="width: 0%"></div>
+                    </div>
+                    <span class="eco-status" id="groupdiscussion-status">0/5 Complete</span>
+                </div>
+            </button>
+            <button class="ecosystem-card" id="eco-publicspeaking" onclick="Explorer.selectEcosystem('publicspeaking')">
+                <div class="eco-card-placeholder">📢</div>
+                <div class="eco-card-overlay">
+                    <h3>📢 Public Speaking</h3>
+                    <p>Deliver speeches that inspire</p>
+                    <div class="eco-progress-mini">
+                        <div class="eco-progress-fill" id="publicspeaking-progress" style="width: 0%"></div>
+                    </div>
+                    <span class="eco-status" id="publicspeaking-status">0/5 Complete</span>
+                </div>
+            </button>
+        </div>
+    </section>
+
+    <!-- ============== EXPLORER: GAME SCREEN ============== -->
+    <section id="screen-explorer-game" class="screen">
+        <div class="screen-header">
+            <button class="btn-back" onclick="Explorer.exitGame()">← Back</button>
+            <h2 id="explorer-ecosystem-title">Forest</h2>
+            <div class="header-score">🏆 <span id="explorer-game-score">0</span></div>
+        </div>
+
+        <div class="game-progress-bar">
+            <div class="game-progress-fill" id="explorer-progress-bar" style="width: 0%"></div>
+            <span class="game-progress-text" id="explorer-progress-text">Question 1 of 5</span>
+        </div>
+
+        <div class="question-card" id="explorer-question-card">
+            <div class="question-category" id="explorer-question-category">Producers</div>
+            <h3 class="question-text" id="explorer-question-text">Loading question...</h3>
+            <div class="question-hint" id="explorer-hint"></div>
+        </div>
+
+        <div class="voice-area">
+            <div class="voice-waveform" id="explorer-waveform">
+                <canvas id="explorer-waveform-canvas" width="300" height="60"></canvas>
+            </div>
+            <button class="btn-mic" id="btn-explorer-mic" onclick="Explorer.toggleListening()">
+                <span class="mic-icon">🎤</span>
+                <span class="mic-label" id="explorer-mic-label">Tap to Speak</span>
+            </button>
+            <div class="transcript-box" id="explorer-transcript">
+                <p class="transcript-placeholder">Your answer will appear here...</p>
+            </div>
+                <div class="suggestion-controls">
+                    <button class="btn-secondary" id="btn-explorer-suggest" onclick="Explorer.revealSuggestion()">💡 Need help? Show suggested answer</button>
+                    <div class="suggestion-box hidden" id="explorer-suggestion">
+                        <div class="suggestion-text" id="explorer-suggestion-text"></div>
+                        <div class="suggestion-actions">
+                            <button class="btn-primary" id="btn-explorer-speak-suggestion" onclick="Explorer.speakSuggestion()">🔊 Read it aloud</button>
+                            <button class="btn-secondary" id="btn-explorer-copy-suggestion" onclick="Explorer.copySuggestion()">📋 Copy</button>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <div class="feedback-panel hidden" id="explorer-feedback">
+            <div class="feedback-result" id="explorer-feedback-result"></div>
+            <div class="feedback-details" id="explorer-feedback-details"></div>
+            <button class="btn-primary" id="btn-explorer-next" onclick="Explorer.nextQuestion()">
+                Next Question →
+            </button>
+        </div>
+    </section>
+
+    <!-- ============== CHALLENGE MODE ============== -->
+    <section id="screen-challenge" class="screen">
+        <div class="screen-header">
+            <button class="btn-back" onclick="Challenge.exitGame()">← Back</button>
+            <h2>⚡ Challenge Mode</h2>
+            <div class="header-score">🏆 <span id="challenge-score">0</span></div>
+        </div>
+
+        <!-- Pre-game -->
+        <div id="challenge-pregame" class="challenge-pregame">
+            <div class="challenge-intro-card">
+                <div class="challenge-intro-icon">⚡</div>
+                <h3>Ready for the Challenge?</h3>
+                <p>Answer as many ecosystem questions as you can in <strong>60 seconds</strong>!</p>
+                <p>Speak clearly and quickly. Each correct answer earns points!</p>
+                <button class="btn-primary btn-large" id="btn-start-challenge" onclick="Challenge.startGame()">
+                    🚀 Start Challenge
+                </button>
+            </div>
+        </div>
+
+        <!-- In-game -->
+        <div id="challenge-ingame" class="challenge-ingame hidden">
+            <div class="challenge-hud">
+                <div class="challenge-timer">
+                    <svg class="timer-ring" viewBox="0 0 120 120">
+                        <circle class="timer-bg" cx="60" cy="60" r="54"/>
+                        <circle class="timer-progress" id="timer-progress" cx="60" cy="60" r="54"/>
+                    </svg>
+                    <span class="timer-text" id="challenge-timer-text">60</span>
+                </div>
+                <div class="challenge-stats">
+                    <div class="challenge-stat">
+                        <span class="stat-label">Correct</span>
+                        <span class="stat-value" id="challenge-correct">0</span>
+                    </div>
+                    <div class="challenge-stat">
+                        <span class="stat-label">Streak</span>
+                        <span class="stat-value" id="challenge-streak">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card challenge-question">
+                <div class="question-category" id="challenge-question-category">Category</div>
+                <h3 class="question-text" id="challenge-question-text">Loading...</h3>
+            </div>
+
+            <div class="voice-area">
+                <div class="voice-waveform" id="challenge-waveform">
+                    <canvas id="challenge-waveform-canvas" width="300" height="60"></canvas>
+                </div>
+                <button class="btn-mic listening" id="btn-challenge-mic">
+                    <span class="mic-icon">🎤</span>
+                    <span class="mic-label">Listening...</span>
+                </button>
+                <div class="transcript-box" id="challenge-transcript">
+                    <p class="transcript-placeholder">Speak your answer...</p>
+                </div>
+            </div>
+
+            <div class="challenge-quick-feedback hidden" id="challenge-feedback">
+                <span id="challenge-feedback-text"></span>
+            </div>
+        </div>
+
+        <!-- Post-game -->
+        <div id="challenge-postgame" class="challenge-postgame hidden">
+            <div class="results-card">
+                <h3>⚡ Challenge Complete!</h3>
+                <div class="results-grid">
+                    <div class="result-item">
+                        <span class="result-value" id="result-correct">0</span>
+                        <span class="result-label">Correct</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-value" id="result-points">0</span>
+                        <span class="result-label">Points</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-value" id="result-best-streak">0</span>
+                        <span class="result-label">Best Streak</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-value" id="result-accuracy">0%</span>
+                        <span class="result-label">Accuracy</span>
+                    </div>
+                </div>
+                <div class="result-badges" id="result-badges"></div>
+                <div class="result-actions">
+                    <button class="btn-primary" onclick="Challenge.startGame()">🔄 Play Again</button>
+                    <button class="btn-secondary" onclick="App.navigateTo('home')">🏠 Home</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============== COMMUNICATION TRAINER ============== -->
+    <section id="screen-trainer" class="screen">
+        <div class="screen-header">
+            <button class="btn-back" onclick="Trainer.exitTrainer()">← Back</button>
+            <h2>🎙️ Communication Trainer</h2>
+            <div class="header-score">🏆 <span id="trainer-score">0</span></div>
+        </div>
+
+        <!-- Topic Selection -->
+        <div id="trainer-topics" class="trainer-topics">
+            <p class="trainer-intro">Pick a topic and explain it using your voice. You'll get feedback on clarity, completeness, and communication quality.</p>
+            <div class="topic-grid" id="topic-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Speaking Area -->
+        <div id="trainer-speaking" class="trainer-speaking hidden">
+            <div class="trainer-topic-card" id="trainer-topic-card">
+                <div class="trainer-topic-icon" id="trainer-topic-icon">🌲</div>
+                <h3 id="trainer-topic-title">Topic Title</h3>
+                <p id="trainer-topic-prompt">Explain this concept in your own words...</p>
+                <div class="trainer-keywords">
+                    <span class="keyword-label">Try to mention:</span>
+                    <div id="trainer-keyword-chips"></div>
+                </div>
+            </div>
+
+            <div class="trainer-timer" id="trainer-timer">
+                <span id="trainer-timer-text">0:00</span>
+                <span class="trainer-timer-label">speaking time</span>
+            </div>
+
+            <div class="voice-area">
+                <div class="voice-waveform" id="trainer-waveform">
+                    <canvas id="trainer-waveform-canvas" width="300" height="60"></canvas>
+                </div>
+                <button class="btn-mic" id="btn-trainer-mic" onclick="Trainer.toggleRecording()">
+                    <span class="mic-icon">🎤</span>
+                    <span class="mic-label" id="trainer-mic-label">Tap to Start Speaking</span>
+                </button>
+                <div class="transcript-box trainer-transcript" id="trainer-transcript">
+                    <p class="transcript-placeholder">Your explanation will appear here...</p>
+                </div>
+            </div>
+
+            <button class="btn-primary hidden" id="btn-submit-trainer" onclick="Trainer.submitResponse()">
+                📝 Get Feedback
+            </button>
+        </div>
+
+        <!-- Feedback Area -->
+        <div id="trainer-feedback" class="trainer-feedback hidden">
+            <div class="trainer-feedback-card">
+                <h3>📊 Your Communication Report</h3>
+
+                <div class="feedback-meters">
+                    <div class="feedback-meter">
+                        <span class="meter-label">Clarity</span>
+                        <div class="meter-bar"><div class="meter-fill" id="meter-clarity" style="width:0%"></div></div>
+                        <span class="meter-value" id="meter-clarity-val">0%</span>
+                    </div>
+                    <div class="feedback-meter">
+                        <span class="meter-label">Completeness</span>
+                        <div class="meter-bar"><div class="meter-fill" id="meter-completeness" style="width:0%"></div></div>
+                        <span class="meter-value" id="meter-completeness-val">0%</span>
+                    </div>
+                    <div class="feedback-meter">
+                        <span class="meter-label">Vocabulary</span>
+                        <div class="meter-bar"><div class="meter-fill" id="meter-vocabulary" style="width:0%"></div></div>
+                        <span class="meter-value" id="meter-vocabulary-val">0%</span>
+                    </div>
+                    <div class="feedback-meter">
+                        <span class="meter-label">Confidence</span>
+                        <div class="meter-bar"><div class="meter-fill" id="meter-confidence" style="width:0%"></div></div>
+                        <span class="meter-value" id="meter-confidence-val">0%</span>
+                    </div>
+                </div>
+
+                <div class="feedback-tips" id="trainer-tips">
+                    <!-- Populated by JS -->
+                </div>
+
+                <div class="feedback-keywords-result" id="trainer-keywords-result">
+                    <!-- Populated by JS -->
+                </div>
+
+                <div class="trainer-actions">
+                    <button class="btn-primary" onclick="Trainer.tryAgain()">🔄 Try Again</button>
+                    <button class="btn-secondary" onclick="Trainer.showTopics()">📋 New Topic</button>
+                    <button class="btn-secondary" onclick="App.navigateTo('home')">🏠 Home</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============== SCOREBOARD ============== -->
+    <section id="screen-scoreboard" class="screen">
+        <div class="screen-header">
+            <button class="btn-back" onclick="App.navigateTo('home')">← Back</button>
+            <h2>📊 Scoreboard</h2>
+        </div>
+
+        <div class="scoreboard-container">
+            <div class="score-summary">
+                <div class="score-big">
+                    <span class="score-number" id="total-score">0</span>
+                    <span class="score-label">Total Points</span>
+                </div>
+                <div class="overall-progress">
+                    <div class="overall-progress-bar">
+                        <div class="overall-progress-fill" id="overall-progress-fill" style="width:0%"></div>
+                    </div>
+                    <span class="overall-progress-text" id="overall-progress-text">Level 1 – Seedling</span>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-icon">🎯</div>
+                    <div class="stat-card-value" id="stat-questions">0</div>
+                    <div class="stat-card-label">Questions Answered</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon">✅</div>
+                    <div class="stat-card-value" id="stat-correct">0</div>
+                    <div class="stat-card-label">Correct Answers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon">🔥</div>
+                    <div class="stat-card-value" id="stat-best-streak">0</div>
+                    <div class="stat-card-label">Best Streak</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon">🌍</div>
+                    <div class="stat-card-value" id="stat-ecosystems">0/5</div>
+                    <div class="stat-card-label">Scenarios Completed</div>
+                </div>
+            </div>
+
+            <h3 class="section-title">🏅 Achievements</h3>
+            <div class="badges-grid" id="badges-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="js/voice.js"></script>
+    <script src="js/feedback.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/explorer.js"></script>
+    <script src="js/challenge.js"></script>
+    <script src="js/trainer.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
